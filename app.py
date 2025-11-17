@@ -169,8 +169,8 @@ if run_button and query.strip():
         articles = aggregate_articles(query=query)
 
         # 🔍 Debug: Show raw article data
-        for a in articles:
-            st.write("Article:", a)
+        #for a in articles:
+            #st.write("Article:", a)
 
         if not articles:
             st.warning("No articles found. Check NEWSAPI_KEY or internet connection.")
@@ -183,8 +183,8 @@ if run_button and query.strip():
         for i, m in enumerate(milestones):
             st.write(f"{i+1}. Date: {m['date']} | Headline: {m['headline']}")
         
-        st.write("🧪 Milestones found:", len(milestones))
-        st.write("🧪 Sample milestone:", milestones[0] if milestones else "None")
+        #st.write("🧪 Milestones found:", len(milestones))
+        #st.write("🧪 Sample milestone:", milestones[0] if milestones else "None")
         
         texts = [a.get('content') or a.get('title') or "" for a in articles]
         summary_text = openai_summarize(texts) if use_openai else lightweight_summary(texts)
@@ -195,7 +195,7 @@ if run_button and query.strip():
     with tab1:
         st.markdown("### Timeline")
         fig = plot_timeline(milestones)
-        st.write("🧪 Timeline figure created:", fig is not None)
+        #st.write("🧪 Timeline figure created:", fig is not None)
         st.write("🧪 Dates used in timeline:")
         for m in milestones:
             if m.get("date"):
@@ -252,6 +252,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
