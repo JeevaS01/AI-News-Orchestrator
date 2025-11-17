@@ -1,9 +1,13 @@
 import os
+import streamlit as st
 from dotenv import load_dotenv
+
 load_dotenv()
 
+news_api_key = st.secrets.get("NEWSAPI_KEY") or os.getenv("NEWSAPI_KEY")
+openai_api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 
-import streamlit as st
+
 from utils.fetcher import aggregate_articles
 from utils.nlp import extract_entities, find_dates, openai_summarize, lightweight_summary
 from utils.timeline import build_milestones_from_entities, plot_timeline
@@ -227,6 +231,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
