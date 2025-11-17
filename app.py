@@ -262,8 +262,8 @@ from utils.nlp import extract_entities, find_dates, openai_summarize, lightweigh
 from utils.timeline import build_milestones_from_entities, plot_timeline
 import pandas as pd
 
- news_api_key = st.secrets["NEWSAPI_KEY"]
- openai_api_key = st.secrets["OPENAI_API_KEY"]
+news_api_key = st.secrets["NEWSAPI_KEY"]
+openai_api_key = st.secrets["OPENAI_API_KEY"]
 # Page config
 st.set_page_config(page_title="AI News Orchestrator", layout="wide")
 st.write("NEWSAPI_KEY loaded:", bool(news_api_key))
@@ -468,6 +468,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
