@@ -1,7 +1,6 @@
 # utils/fetcher.py
 import os
 import requests
-from newspaper import Article
 from bs4 import BeautifulSoup
 from datetime import datetime
 from typing import List, Dict
@@ -55,24 +54,25 @@ def fetch_from_gnews(query: str, page_size: int = 8) -> List[Dict]:
             })
     return out
 
-def extract_full_text(url: str) -> str:
+def extract_full_text(url):
     try:
-        art = Article(url)
-        art.download()
-        art.parse()
-        if art.text and len(art.text) > 50:
-            return art.text
-    except Exception:
-        pass
-    # fallback simple scrape:
-    try:
-        r = requests.get(url, timeout=10, headers={"User-Agent":"Mozilla/5.0"})
-        soup = BeautifulSoup(r.content, "html.parser")
-        paragraphs = [p.get_text().strip() for p in soup.find_all("p")]
-        joined = "\n\n".join([p for p in paragraphs if len(p) > 30])
-        return joined[:20000]
-    except Exception:
-        return ""
+        html = requests.get(url, timeout=10).text
+        soup = BeautifulSoup(html, "html.parser")
+
+        # Try meta description first
+        desc = soup.find("meta", {"name": "description"})
+        if desc and desc.get("content"):
+            return desc["content"]
+
+        # Fall back to paragraphs
+        paragraphs = soup.find_all("p")
+        text = " ".join([p.get_text(strip=True) for p in paragraphs])
+
+        return text if text.strip() else "No readable content found."
+
+    except:
+        return "Failed to fetch article."
+
 
 def aggregate_articles(query: str, max_articles: int = 8) -> List[Dict]:
     articles = fetch_from_newsapi(query, page_size=max_articles)
@@ -90,3 +90,4 @@ def aggregate_articles(query: str, max_articles: int = 8) -> List[Dict]:
         a["content"] = extract_full_text(a.get("url", "")) or ""
         dedup.append(a)
     return dedup[:max_articles]
+
