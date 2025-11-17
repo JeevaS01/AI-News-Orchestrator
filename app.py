@@ -20,7 +20,7 @@ st.set_page_config(
     page_title="My Dashboard",
     page_icon="✨",
     layout="wide",             # wide layout
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="expanded")
 
 st.markdown("""
     <div style='padding: 1rem; background-color: var(--primary-color); color: white; border-radius: 8px;'>
@@ -478,6 +478,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
