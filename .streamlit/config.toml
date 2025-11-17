@@ -1,5 +1,5 @@
 [theme]
-base = "light"
+base = "light"  # <-- must be "light"
 primaryColor = "#5b4bff"
 backgroundColor = "#ffffff"
 secondaryBackgroundColor = "#f5f5f5"
@@ -10,4 +10,5 @@ font = "sans serif"
 headless = true
 port = $PORT
 enableCORS = false
+
 
