@@ -91,35 +91,49 @@ def find_dates(text: str):
 # -----------------------------------------
 # OpenAI summarization
 # -----------------------------------------
-def openai_summarize(texts: List[str], prompt_extra: str = "") -> str:
-    if not OPENAI_KEY:
-        return "OpenAI API key missing. Set OPENAI_API_KEY in environment."
+# def openai_summarize(texts: List[str], prompt_extra: str = "") -> str:
+#     if not OPENAI_KEY:
+#         return "OpenAI API key missing. Set OPENAI_API_KEY in environment."
 
-    combined = "\n\n---\n\n".join([t[:4000] for t in texts])
+#     combined = "\n\n---\n\n".join([t[:4000] for t in texts])
 
-    system_prompt = (
-        "You are an AI that summarizes multiple news articles. "
-        "Output: (1) Timeline with ISO dates → events, "
-        "(2) 2-paragraph summary, "
-        "(3) Conflicts between sources."
+#     system_prompt = (
+#         "You are an AI that summarizes multiple news articles. "
+#         "Output: (1) Timeline with ISO dates → events, "
+#         "(2) 2-paragraph summary, "
+#         "(3) Conflicts between sources."
+#     )
+
+#     user_prompt = f"{prompt_extra}\n\nArticles:\n{combined}"
+
+#     try:
+#         resp = openai.ChatCompletion.create(
+#             model="gpt-4o-mini",
+#             messages=[
+#                 {"role": "system", "content": system_prompt},
+#                 {"role": "user", "content": user_prompt}
+#             ],
+#             temperature=0.2,
+#             max_tokens=800
+#         )
+#         return resp.choices[0].message.content.strip()
+#     except Exception as e:
+#         return f"AI summarization failed: {e}"
+from openai import OpenAI
+import os
+
+client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
+
+def openai_summarize(texts):
+    combined_text = "\n\n".join(texts[:5])  # Limit to first 5 articles
+    response = client.chat.completions.create(
+        model="gpt-4",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant that summarizes news articles."},
+            {"role": "user", "content": f"Summarize the following news content:\n\n{combined_text}"}
+        ]
     )
-
-    user_prompt = f"{prompt_extra}\n\nArticles:\n{combined}"
-
-    try:
-        resp = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
-            messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
-            ],
-            temperature=0.2,
-            max_tokens=800
-        )
-        return resp.choices[0].message.content.strip()
-    except Exception as e:
-        return f"AI summarization failed: {e}"
-
+    return response.choices[0].message.content
 
 # -----------------------------------------
 # Lightweight fallback summary
@@ -132,6 +146,7 @@ def lightweight_summary(texts: List[str]) -> str:
 
     summary = " ".join(bullets[:5])
     return summary[:1000] + ("..." if len(summary) > 1000 else "")
+
 
 
 
