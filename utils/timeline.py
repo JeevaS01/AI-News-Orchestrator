@@ -9,61 +9,61 @@ import numpy as np
 from typing import List, Dict
 import dateparser
 
-# def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
-#     items = []
-
-#     for a in articles:
-#         # Try publishedAt first
-#         raw_date = a.get("publishedAt")
-#         dt = dateparser.parse(raw_date) if raw_date else None
-
-#         # Fallback: use first extracted date from content/title
-#         if not dt and a.get("dates_found"):
-#             dt = dateparser.parse(a["dates_found"][0])
-
-#         iso = dt.date().isoformat() if dt else None
-
-#         title = a.get("title") or ""
-#         text = a.get("content") or ""
-
-#         items.append({
-#             "date": iso,
-#             "headline": title[:120],
-#             "description": (text[:400] + "...") if text else "",
-#             "url": a.get("url"),
-#             "source": a.get("source")
-#         })
-
-#     # Sort by date (None values go to the end)
-#     items_sorted = sorted(items, key=lambda x: x["date"] if x["date"] else "9999-12-31")
-#     return items_sorted
-from datetime import datetime
-
 def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
     items = []
 
     for a in articles:
+        # Try publishedAt first
         raw_date = a.get("publishedAt")
         dt = dateparser.parse(raw_date) if raw_date else None
 
+        # Fallback: use first extracted date from content/title
         if not dt and a.get("dates_found"):
             dt = dateparser.parse(a["dates_found"][0])
 
-        if not dt:
-            continue  # Skip if no valid date
+        iso = dt.date().isoformat() if dt else None
 
-        iso = dt.date().isoformat()
+        title = a.get("title") or ""
+        text = a.get("content") or ""
 
         items.append({
             "date": iso,
-            "headline": a.get("title", "")[:120],
-            "description": (a.get("content", "")[:400] + "...") if a.get("content") else "",
+            "headline": title[:120],
+            "description": (text[:400] + "...") if text else "",
             "url": a.get("url"),
             "source": a.get("source")
         })
 
-    items_sorted = sorted(items, key=lambda x: x["date"])
+    # Sort by date (None values go to the end)
+    items_sorted = sorted(items, key=lambda x: x["date"] if x["date"] else "9999-12-31")
     return items_sorted
+# from datetime import datetime
+
+# def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
+#     items = []
+
+#     for a in articles:
+#         raw_date = a.get("publishedAt")
+#         dt = dateparser.parse(raw_date) if raw_date else None
+
+#         if not dt and a.get("dates_found"):
+#             dt = dateparser.parse(a["dates_found"][0])
+
+#         if not dt:
+#             continue  # Skip if no valid date
+
+#         iso = dt.date().isoformat()
+
+#         items.append({
+#             "date": iso,
+#             "headline": a.get("title", "")[:120],
+#             "description": (a.get("content", "")[:400] + "...") if a.get("content") else "",
+#             "url": a.get("url"),
+#             "source": a.get("source")
+#         })
+
+#     items_sorted = sorted(items, key=lambda x: x["date"])
+#     return items_sorted
 
 def plot_timeline(milestones: List[Dict]):
     df = []
@@ -98,5 +98,6 @@ def plot_timeline(milestones: List[Dict]):
         showlegend=False
     )
     return fig
+
 
 
