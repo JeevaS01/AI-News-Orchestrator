@@ -6,18 +6,25 @@ from dateutil import parser as du_parser
 import dateparser
 import numpy as np
 
+from typing import List, Dict
+import dateparser
+
 def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
     items = []
-    for a in articles:
-        raw_date = a.get("publishedAt") or ""
-        dt = dateparser.parse(raw_date)
-        iso = dt.date().isoformat() if dt else None
 
-        if not iso:
-            continue  # Skip articles with no valid date
+    for a in articles:
+        date = a.get("publishedAt")
+
+        # Normalize using dateparser
+        if date:
+            dt = dateparser.parse(date)
+            iso = dt.date().isoformat() if dt else None
+        else:
+            iso = None
 
         title = a.get("title") or ""
         text = a.get("content") or ""
+
         items.append({
             "date": iso,
             "headline": title[:120],
@@ -26,8 +33,8 @@ def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
             "source": a.get("source")
         })
 
-    # Sort by date
-    items_sorted = sorted(items, key=lambda x: x["date"])
+    # Sort by date (None values go to the end)
+    items_sorted = sorted(items, key=lambda x: x["date"] if x["date"] else "9999-12-31")
     return items_sorted
 
 def plot_timeline(milestones: List[Dict]):
