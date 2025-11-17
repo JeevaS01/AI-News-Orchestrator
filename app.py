@@ -179,9 +179,9 @@ if run_button and query.strip():
             a['dates_found'] = find_dates((a.get('content') or "") + " " + (a.get('title') or ""))
         milestones = build_milestones_from_entities(articles)
         
-        st.write("Total milestones:", len(milestones))
-        for i, m in enumerate(milestones):
-            st.write(f"{i+1}. Date: {m['date']} | Headline: {m['headline']}")
+        #st.write("Total milestones:", len(milestones))
+       # for i, m in enumerate(milestones):
+           # st.write(f"{i+1}. Date: {m['date']} | Headline: {m['headline']}")
         
         #st.write("🧪 Milestones found:", len(milestones))
         #st.write("🧪 Sample milestone:", milestones[0] if milestones else "None")
@@ -252,6 +252,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
