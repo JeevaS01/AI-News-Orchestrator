@@ -1,119 +1,159 @@
 import streamlit as st
 import pandas as pd
-import os
+from datetime import datetime
 from utils.fetcher import aggregate_articles
 from utils.nlp import extract_entities, find_dates, openai_summarize, lightweight_summary
 
 st.set_page_config(page_title="AI News Orchestrator", layout="wide")
 
-# --------------------------------------------------------
+# ---------------------------------------------------------
+# CUSTOM CSS (same as old UI)
+# ---------------------------------------------------------
+st.markdown("""
+<style>
+    .main-title {
+        font-size: 42px;
+        font-weight: 800;
+        text-align: center;
+        color: #2E86C1;
+        margin-bottom: 20px;
+    }
+    .section-title {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1A5276;
+        margin-top: 40px;
+    }
+    .card {
+        padding: 18px;
+        border-radius: 12px;
+        background-color: #F8F9F9;
+        border: 1px solid #D5D8DC;
+        margin-bottom: 16px;
+    }
+    .article-card {
+        background: white;
+        padding: 16px;
+        border-radius: 12px;
+        border: 1px solid #E5E7E9;
+        box-shadow: 0px 2px 4px rgba(0,0,0,0.05);
+        margin-bottom: 14px;
+    }
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------------------------------------------------
 # HEADER
-# --------------------------------------------------------
-st.title("📰 AI News Orchestrator")
-st.write("Search news, extract insights, generate summaries & build event timelines.")
+# ---------------------------------------------------------
+st.markdown("<h1 class='main-title'>📰 AI News Orchestrator</h1>", unsafe_allow_html=True)
+st.write("Search global news → extract insights → build AI-generated timelines.")
 
+# ---------------------------------------------------------
+# SIDEBAR
+# ---------------------------------------------------------
+st.sidebar.header("🔍 Search Settings")
 
-# --------------------------------------------------------
-# SIDEBAR SETTINGS
-# --------------------------------------------------------
-st.sidebar.header("⚙ Configuration")
+query = st.sidebar.text_input("Enter a topic:", value="AI")
+mode = st.sidebar.radio("Summarization Mode:", ["LLM", "Lightweight"])
+btn = st.sidebar.button("Run Analysis")
 
-query = st.sidebar.text_input("Search topic:", value="AI")
-llm_option = st.sidebar.selectbox(
-    "Summarization Mode",
-    ["LLM (OpenAI)", "Lightweight (Offline)"]
-)
-btn_fetch = st.sidebar.button("Fetch & Analyze News")
+# ---------------------------------------------------------
+# MAIN ACTION
+# ---------------------------------------------------------
+if btn:
+    st.markdown("<h2 class='section-title'>1️⃣ Fetching News</h2>", unsafe_allow_html=True)
 
-
-# --------------------------------------------------------
-# MAIN LOGIC
-# --------------------------------------------------------
-if btn_fetch:
-
-    st.info(f"Fetching latest articles for **{query}** ...")
-
-    articles = aggregate_articles(query=query)
+    with st.spinner(f"Fetching latest news for '{query}' ..."):
+        articles = aggregate_articles(query=query)
 
     if not articles:
-        st.error("No articles found or API error. Check NEWSAPI_KEY in secrets.")
+        st.error("No news found. Check API key or try different keywords.")
         st.stop()
 
     st.success(f"Fetched {len(articles)} articles.")
 
-    # -----------------------------------------------
-    # SHOW ARTICLE LIST
-    # -----------------------------------------------
-    st.subheader("📄 Articles Fetched")
+    # ---------------------------------------------------------
+    # ARTICLE LIST VIEW (old UI style)
+    # ---------------------------------------------------------
+    st.markdown("<h2 class='section-title'>2️⃣ Articles Found</h2>", unsafe_allow_html=True)
 
-    df = pd.DataFrame([
-        {
-            "Title": a["title"],
-            "Source": a["source"],
-            "Published": a["published"],
-            "URL": a["url"]
-        }
-        for a in articles
-    ])
+    col1, col2, col3 = st.columns(3)
 
-    st.dataframe(df, use_container_width=True)
+    for i, art in enumerate(articles):
+        target_col = [col1, col2, col3][i % 3]
+        with target_col:
+            st.markdown(f"""
+            <div class='article-card'>
+                <h4>{art['title']}</h4>
+                <p><b>Source:</b> {art['source']}</p>
+                <p><b>Date:</b> {art['published']}</p>
+                <a href='{art['url']}' target='_blank'>Read full article</a>
+            </div>
+            """, unsafe_allow_html=True)
 
-    # -----------------------------------------------
-    # PROCESS CONTENT
-    # -----------------------------------------------
-    texts = [a["content"] for a in articles]
+    # ---------------------------------------------------------
+    # ENTITY EXTRACTION
+    # ---------------------------------------------------------
+    st.markdown("<h2 class='section-title'>3️⃣ Extracted Entities</h2>", unsafe_allow_html=True)
 
-    # Extract entities
-    st.subheader("🔍 Named Entities (Lightweight)")
+    all_ents = {"PERSON":[], "ORG":[], "GPE":[], "EVENT":[], "MISC":[]}
 
-    all_ents = {}
     for a in articles:
         ents = extract_entities(a["content"])
         for k, v in ents.items():
-            all_ents.setdefault(k, []).extend(v)
+            all_ents[k].extend(v)
 
-    # Deduplicate
+    # Dedupe
     for k in all_ents:
         all_ents[k] = list(dict.fromkeys(all_ents[k]))
 
     st.json(all_ents)
 
-    # Extract dates
-    st.subheader("📅 Dates Detected (Heuristic)")
-    collected_dates = []
-    for a in texts:
-        collected_dates.extend(find_dates(a))
+    # ---------------------------------------------------------
+    # DATE TIMELINE
+    # ---------------------------------------------------------
+    st.markdown("<h2 class='section-title'>4️⃣ Timeline (Auto-Extracted Dates)</h2>", unsafe_allow_html=True)
 
-    collected_dates = sorted(list(dict.fromkeys(collected_dates)))
-    st.write(collected_dates)
+    date_list = []
+    for a in articles:
+        date_list += find_dates(a["content"])
 
-    # -----------------------------------------------
-    # SUMMARIZATION
-    # -----------------------------------------------
-    st.subheader("📝 Summary & Timeline")
+    date_list = sorted(list(dict.fromkeys(date_list)))
 
-    if llm_option == "LLM (OpenAI)":
-        st.info("Using OpenAI model for summarization...")
-        output = openai_summarize(texts)
+    if date_list:
+        for d in date_list:
+            st.markdown(f"- **{d}**")
     else:
-        st.info("Using local lightweight summarizer...")
-        output = lightweight_summary(texts)
+        st.info("No dates detected.")
 
-    st.write(output)
+    # ---------------------------------------------------------
+    # SUMMARIZATION OUTPUT BOX
+    # ---------------------------------------------------------
+    st.markdown("<h2 class='section-title'>5️⃣ AI Summary</h2>", unsafe_allow_html=True)
 
-    # -----------------------------------------------
-    # RAW ARTICLE TEXT
-    # -----------------------------------------------
-    st.subheader("📚 Raw Article Texts")
+    texts = [a["content"] for a in articles]
 
-    for idx, art in enumerate(articles):
-        with st.expander(f"{idx+1}. {art['title']}"):
-            st.write(f"**Source:** {art['source']}")
-            st.write(f"**Published:** {art['published']}")
-            st.write("---")
+    with st.spinner("Generating summary..."):
+        if mode == "LLM":
+            summary = openai_summarize(texts)
+        else:
+            summary = lightweight_summary(texts)
+
+    st.markdown(f"""
+    <div class='card'>
+        <h4>Summary</h4>
+        <p>{summary}</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ---------------------------------------------------------
+    # RAW TEXT EXPANDERS
+    # ---------------------------------------------------------
+    st.markdown("<h2 class='section-title'>6️⃣ Full Article Text</h2>", unsafe_allow_html=True)
+
+    for i, art in enumerate(articles):
+        with st.expander(f"{i+1}. {art['title']}"):
             st.write(art["content"])
-            st.markdown(f"[Read Original Article]({art['url']})")
-
 
 else:
-    st.info("Enter a topic and click **Fetch & Analyze News** to begin.")
+    st.info("Enter a topic → click **Run Analysis** to begin.")
