@@ -39,19 +39,27 @@ def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
     return items_sorted
 
 def plot_timeline(milestones: List[Dict]):
-    # create DataFrame for plotly scatter
     df = []
+
     for m in milestones:
         if not m.get("date"):
             continue
-        df.append({"date": m["date"], "label": m["headline"], "source": m["source"]})
+        try:
+            parsed_date = pd.to_datetime(m["date"])
+            df.append({
+                "date": parsed_date,
+                "label": m["headline"],
+                "source": m["source"]
+            })
+        except Exception as e:
+            print("Date parsing failed:", m["date"], e)
+
     if not df:
         return None
+
     df = pd.DataFrame(df)
-    df['date'] = pd.to_datetime(df['date'])
-    # place y jitter to avoid overlap
-    n = len(df)
-    df['y'] = np.linspace(1, 1.8, n)
+    df['y'] = np.linspace(1, 1.8, len(df))
+
     fig = px.scatter(df, x='date', y='y', text='label', hover_data=['source'])
     fig.update_traces(marker=dict(size=18, symbol="diamond"))
     fig.update_yaxes(visible=False)
