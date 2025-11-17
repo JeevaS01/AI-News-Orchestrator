@@ -15,7 +15,11 @@ news_api_key = st.secrets["NEWSAPI_KEY"]
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="AI News Orchestrator", layout="wide")
-
+st.markdown("""
+    <div style='padding: 1rem; background-color: var(--primary-color); color: white; border-radius: 8px;'>
+        This box should match your primary theme color.
+    </div>
+""", unsafe_allow_html=True)
 # -----------------------------
 # Inject custom CSS for dashboard
 # -----------------------------
@@ -160,13 +164,7 @@ st.markdown("""
 # -----------------------------
 st.markdown('<div class="header-title">AI News Orchestrator</div>', unsafe_allow_html=True)
 st.markdown('<div class="header-sub">🧠 Event Timeline Generator & Multi-Source News Analyzer</div>', unsafe_allow_html=True)
-st.markdown(f"""
-    <span style='background-color: var(--primary-color); color: white;
-                 padding: 6px 14px; border-radius: 999px;
-                 font-weight: 600; display: inline-block;'>
-        HR Analytics
-    </span>
-""", unsafe_allow_html=True)
+
 st.subheader("🔍 Enter An Event Or Topic")
 
 st.markdown("<div class='auto-text'>Event / Topic (e.g., 'Chandrayaan-3 mission', 'OpenAI GPT-5 launch')</div>", unsafe_allow_html=True)
@@ -473,6 +471,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
