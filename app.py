@@ -185,6 +185,7 @@ if run_button and query.strip():
     with tab1:
         st.markdown("### Timeline")
         fig = plot_timeline(milestones)
+        st.write("🧪 Timeline figure created:", fig is not None)
         if fig:
             st.plotly_chart(fig, use_container_width=True)
         else:
@@ -236,6 +237,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
