@@ -8,6 +8,9 @@ from utils.nlp import extract_entities, find_dates, openai_summarize, lightweigh
 from utils.timeline import build_milestones_from_entities, plot_timeline
 import pandas as pd
 
+from utils.nlp import openai_summarize
+summary_text = openai_summarize(texts)
+
 news_api_key = st.secrets["NEWSAPI_KEY"]
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
@@ -463,6 +466,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
