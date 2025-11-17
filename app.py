@@ -15,7 +15,7 @@ news_api_key = st.secrets["NEWSAPI_KEY"]
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 
 st.set_page_config(page_title="AI News Orchestrator", layout="wide")
-
+st.write(st.get_option("theme"))
 # -----------------------------
 # Inject custom CSS for dashboard
 # -----------------------------
@@ -467,6 +467,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
