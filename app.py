@@ -3,8 +3,9 @@ import streamlit as st
 from dotenv import load_dotenv
 
 load_dotenv()
+news_api_key = st.secrets["NEWSAPI_KEY"]
 
-news_api_key = st.secrets.get("NEWSAPI_KEY") or os.getenv("NEWSAPI_KEY")
+#news_api_key = st.secrets.get("NEWSAPI_KEY") or os.getenv("NEWSAPI_KEY")
 openai_api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 
 
@@ -231,6 +232,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
