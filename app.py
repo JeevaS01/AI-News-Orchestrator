@@ -1,3 +1,4 @@
+import os
 from dotenv import load_dotenv
 load_dotenv()
 
@@ -6,6 +7,7 @@ from utils.fetcher import aggregate_articles
 from utils.nlp import extract_entities, find_dates, openai_summarize, lightweight_summary
 from utils.timeline import build_milestones_from_entities, plot_timeline
 import pandas as pd
+
 
 # Page config
 st.set_page_config(page_title="AI News Orchestrator", layout="wide")
@@ -207,10 +209,14 @@ if run_button and query.strip():
         df = pd.DataFrame(rows)
         expected_cols = ['source', 'title', 'score']
 
-if all(col in df.columns for col in expected_cols):
-    st.dataframe(df[expected_cols])
+if 'df' in locals() and not df.empty:
+    if all(col in df.columns for col in expected_cols):
+        st.dataframe(df[expected_cols])
+    else:
+        st.warning("Required metadata columns not found.")
 else:
     st.warning("No article metadata available to display.")
+
 
 
 # Footer
@@ -220,5 +226,6 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
