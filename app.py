@@ -68,6 +68,20 @@ st.markdown("""
     color: #666666;
     margin-bottom: 1.5rem;
 }
+/* Adaptive input label and value */
+.input-label {
+    color: var(--text-color);
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+}
+.input-wrapper input {
+    color: var(--text-color) !important;
+    background-color: var(--background-color) !important;
+    border: 1px solid #ccc !important;
+    border-radius: 10px !important;
+    padding: 0.6rem 1rem !important;
+}
 
 /* Gradient buttons */
 .stButton>button {
@@ -141,10 +155,12 @@ st.markdown('<div class="header-title">AI News Orchestrator</div>', unsafe_allow
 st.markdown('<div class="header-sub">🧠 Event Timeline Generator & Multi-Source News Analyzer</div>', unsafe_allow_html=True)
 
 st.subheader("🔍 Enter An Event Or Topic")
-query = st.text_input(
-    "Event / Topic (e.g., 'Chandrayaan-3 mission', 'OpenAI GPT-5 launch')",
-    value="Chandrayaan-3 mission"
-)
+
+st.markdown("<div class='input-label'>Event / Topic (e.g., 'Chandrayaan-3 mission', 'OpenAI GPT-5 launch')</div>", unsafe_allow_html=True)
+with st.container():
+    st.markdown("<div class='input-wrapper'>", unsafe_allow_html=True)
+    query = st.text_input(label="", value="Chandrayaan-3 mission", label_visibility="collapsed")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 cols = st.columns([1, 1, 1, 2])
 with cols[0]:
@@ -445,6 +461,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
