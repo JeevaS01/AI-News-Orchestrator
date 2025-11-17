@@ -68,24 +68,24 @@ def find_dates(text: str):
     parsed_dates = [dateparser.parse(m).date().isoformat() for m in matches if dateparser.parse(m)]
     return parsed_dates
 
-    found_dates = set()
+    # found_dates = set()
 
-    # Date-like patterns
-    patterns = [
-        r"\b\d{4}-\d{2}-\d{2}\b",
-        r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
-        r"\b\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}\b",
-        r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s*\d{0,4}",
-        r"\b\d{4}\b"
-    ]
+    # # Date-like patterns
+    # patterns = [
+    #     r"\b\d{4}-\d{2}-\d{2}\b",
+    #     r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
+    #     r"\b\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}\b",
+    #     r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s*\d{0,4}",
+    #     r"\b\d{4}\b"
+    # ]
 
-    for pat in patterns:
-        for m in re.findall(pat, text, flags=re.IGNORECASE):
-            dt = dateparser.parse(m)
-            if dt:
-                found_dates.add(dt.date().isoformat())
+    # for pat in patterns:
+    #     for m in re.findall(pat, text, flags=re.IGNORECASE):
+    #         dt = dateparser.parse(m)
+    #         if dt:
+    #             found_dates.add(dt.date().isoformat())
 
-    return sorted(found_dates)
+    # return sorted(found_dates)
 
 
 # -----------------------------------------
@@ -132,4 +132,5 @@ def lightweight_summary(texts: List[str]) -> str:
 
     summary = " ".join(bullets[:5])
     return summary[:1000] + ("..." if len(summary) > 1000 else "")
+
 
