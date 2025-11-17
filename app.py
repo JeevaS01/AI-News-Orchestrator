@@ -1,6 +1,16 @@
 from dotenv import load_dotenv
 load_dotenv()
 
+import os
+import streamlit as st
+
+st.write("DEBUG: NEWSAPI_KEY loaded:", bool(os.getenv("NEWSAPI_KEY")))
+st.write("DEBUG: OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
+# Optionally print the first 6 chars to confirm (do NOT reveal real key publicly)
+if os.getenv("NEWSAPI_KEY"):
+    st.write("NEWSAPI_KEY starts with:", os.getenv("NEWSAPI_KEY")[:6])
+
+
 import streamlit as st
 from utils.fetcher import aggregate_articles
 from utils.nlp import extract_entities, find_dates, openai_summarize, lightweight_summary
@@ -201,7 +211,15 @@ if run_button and query.strip():
                 "score": score
             })
         df = pd.DataFrame(rows)
-        st.dataframe(df[['source', 'title', 'score']])
+        # Safe rendering of the source table (prevents KeyError if df is missing columns)
+expected_cols = ['source', 'title', 'score']
+available_cols = [c for c in expected_cols if c in df.columns]
+
+if len(available_cols) == 0:
+    st.warning("No article scoring data available.")
+else:
+    st.dataframe(df[available_cols])
+
 
 # Footer
 st.markdown("""
@@ -210,3 +228,4 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
