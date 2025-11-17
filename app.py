@@ -218,21 +218,21 @@ if run_button and query.strip():
         #     </div>
         #     """, unsafe_allow_html=True)
         for m in milestones:
-        date = m.get("date") or "Unknown date"
-        st.markdown(f"""
-        <div style='background-color: var(--background-color); color: var(--text-color);
-                    box-shadow: 0 6px 15px rgba(0,0,0,0.05); padding: 1rem;
-                    border-radius: 16px; border-left: 6px solid #9b59d0; margin-bottom: 1.2rem;'>
-            <span style='background: linear-gradient(90deg, #5b4bff, #9b59d0);
-                         color: white; padding: 6px 14px; border-radius: 999px;
-                         font-weight: 600; display: inline-block; margin-bottom: 8px;'>
-                {date}
-            </span>
-            <h4 style='color: var(--text-color);'>{m.get('headline')}</h4>
-            <div style='color: var(--text-color);'>{m.get('description')}</div>
-            <a href='{m.get('url')}' target='_blank'>🔗 Source</a>
-        </div>
-        """, unsafe_allow_html=True)
+            date = m.get("date") or "Unknown date"
+            st.markdown(f"""
+            <div style='background-color: var(--background-color); color: var(--text-color);
+                        box-shadow: 0 6px 15px rgba(0,0,0,0.05); padding: 1rem;
+                        border-radius: 16px; border-left: 6px solid #9b59d0; margin-bottom: 1.2rem;'>
+                <span style='background: linear-gradient(90deg, #5b4bff, #9b59d0);
+                             color: white; padding: 6px 14px; border-radius: 999px;
+                             font-weight: 600; display: inline-block; margin-bottom: 8px;'>
+                    {date}
+                </span>
+                <h4 style='color: var(--text-color);'>{m.get('headline')}</h4>
+                <div style='color: var(--text-color);'>{m.get('description')}</div>
+                <a href='{m.get('url')}' target='_blank'>🔗 Source</a>
+            </div>
+            """, unsafe_allow_html=True)
 
     with tab2:
         st.markdown("### 🧠 Event Summary")
@@ -488,6 +488,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
