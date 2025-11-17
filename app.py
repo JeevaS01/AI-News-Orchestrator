@@ -11,8 +11,8 @@ news_api_key = st.secrets["NEWSAPI_KEY"]
 openai_api_key = st.secrets["OPENAI_API_KEY"]
 # Page config
 st.set_page_config(page_title="AI News Orchestrator", layout="wide")
-st.write("NEWSAPI_KEY loaded:", bool(news_api_key))
-st.write("OPENAI_API_KEY loaded:",bool(openai_api_key))
+#st.write("NEWSAPI_KEY loaded:", bool(news_api_key))
+#st.write("OPENAI_API_KEY loaded:",bool(openai_api_key))
 # -----------------------------
 # Inject custom CSS for dashboard
 # -----------------------------
@@ -213,6 +213,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
