@@ -9,7 +9,7 @@ import streamlit as st
 #client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
 # Load API key from environment (Streamlit secrets)
- OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 if OPENAI_KEY:
      openai.api_key = OPENAI_KEY
 
@@ -149,6 +149,7 @@ def lightweight_summary(texts: List[str]) -> str:
 
     summary = " ".join(bullets[:5])
     return summary[:1000] + ("..." if len(summary) > 1000 else "")
+
 
 
 
