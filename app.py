@@ -4,9 +4,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 news_api_key = st.secrets["NEWSAPI_KEY"]
-
+openai_api_key = st.secrets["OPENAI_API_KEY"]
 #news_api_key = st.secrets.get("NEWSAPI_KEY") or os.getenv("NEWSAPI_KEY")
-openai_api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
+#openai_api_key = st.secrets.get("OPENAI_API_KEY") or os.getenv("OPENAI_API_KEY")
 
 
 from utils.fetcher import aggregate_articles
@@ -232,6 +232,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
