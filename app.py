@@ -174,8 +174,13 @@ if run_button and query.strip():
             a['entities'] = extract_entities(a.get('content', '') or a.get('title', ''))
             a['dates_found'] = find_dates((a.get('content') or "") + " " + (a.get('title') or ""))
         milestones = build_milestones_from_entities(articles)
+        
+        for i, m in enumerate(milestones):
+            st.write(f"Milestone {i+1} date:", m.get("date"))
+        
         st.write("🧪 Milestones found:", len(milestones))
         st.write("🧪 Sample milestone:", milestones[0] if milestones else "None")
+        
         texts = [a.get('content') or a.get('title') or "" for a in articles]
         summary_text = openai_summarize(texts) if use_openai else lightweight_summary(texts)
 
@@ -237,6 +242,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
