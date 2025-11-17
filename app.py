@@ -141,6 +141,9 @@ st.markdown("""
 st.markdown('<div class="header-title">AI News Orchestrator</div>', unsafe_allow_html=True)
 st.markdown('<div class="header-sub">🧠 Event Timeline Generator & Multi-Source News Analyzer</div>', unsafe_allow_html=True)
 
+st.write("🧪 Milestones found:", len(milestones))
+st.write("🧪 Sample milestone:", milestones[0] if milestones else "None")
+
 st.subheader("🔍 Enter An Event Or Topic")
 query = st.text_input(
     "Event / Topic (e.g., 'Chandrayaan-3 mission', 'OpenAI GPT-5 launch')",
@@ -232,6 +235,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
