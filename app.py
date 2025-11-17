@@ -156,11 +156,8 @@ st.markdown('<div class="header-sub">🧠 Event Timeline Generator & Multi-Sourc
 
 st.subheader("🔍 Enter An Event Or Topic")
 
-st.markdown("<div class='input-label'>Event / Topic (e.g., 'Chandrayaan-3 mission', 'OpenAI GPT-5 launch')</div>", unsafe_allow_html=True)
-with st.container():
-    st.markdown("<div class='input-wrapper'>", unsafe_allow_html=True)
-    query = st.text_input(label="", value="Chandrayaan-3 mission", label_visibility="collapsed")
-    st.markdown("</div>", unsafe_allow_html=True)
+st.markdown("<div class='auto-text'>Event / Topic (e.g., 'Chandrayaan-3 mission', 'OpenAI GPT-5 launch')</div>", unsafe_allow_html=True)
+query = st.text_input(label="", value="Chandrayaan-3 mission", label_visibility="collapsed")
 
 cols = st.columns([1, 1, 1, 2])
 with cols[0]:
@@ -461,6 +458,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
