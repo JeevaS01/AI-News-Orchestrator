@@ -22,11 +22,6 @@ st.set_page_config(
     layout="wide",             # wide layout
     initial_sidebar_state="expanded")
 
-st.markdown("""
-    <div style='padding: 1rem; background-color: var(--primary-color); color: white; border-radius: 8px;'>
-        This box should match your primary theme color.
-    </div>
-""", unsafe_allow_html=True)
 # -----------------------------
 # Inject custom CSS for dashboard
 # -----------------------------
@@ -478,6 +473,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
