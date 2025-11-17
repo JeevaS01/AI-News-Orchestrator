@@ -3,8 +3,8 @@ import os
 from typing import List, Dict
 import re
 import dateparser
-from openai import OpenAI
-import streamlit as st
+import OpenAI
+#import streamlit as st
 
 #client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
 
@@ -149,6 +149,7 @@ def lightweight_summary(texts: List[str]) -> str:
 
     summary = " ".join(bullets[:5])
     return summary[:1000] + ("..." if len(summary) > 1000 else "")
+
 
 
 
