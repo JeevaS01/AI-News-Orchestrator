@@ -9,13 +9,13 @@ import numpy as np
 def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
     items = []
     for a in articles:
-        date = a.get("publishedAt")
-        # normalize using dateparser
-        if date:
-            dt = dateparser.parse(date)
-            iso = dt.date().isoformat() if dt else None
-        else:
-            iso = None
+        raw_date = a.get("publishedAt") or ""
+        dt = dateparser.parse(raw_date)
+        iso = dt.date().isoformat() if dt else None
+
+        if not iso:
+            continue  # Skip articles with no valid date
+
         title = a.get("title") or ""
         text = a.get("content") or ""
         items.append({
@@ -25,8 +25,9 @@ def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
             "url": a.get("url"),
             "source": a.get("source")
         })
-    # sort by date (None -> end)
-    items_sorted = sorted(items, key=lambda x: x["date"] if x["date"] else "9999-12-31")
+
+    # Sort by date
+    items_sorted = sorted(items, key=lambda x: x["date"])
     return items_sorted
 
 def plot_timeline(milestones: List[Dict]):
@@ -53,3 +54,4 @@ def plot_timeline(milestones: List[Dict]):
         showlegend=False
     )
     return fig
+
