@@ -107,22 +107,35 @@ st.markdown("""
 }
 
 /* Timeline boxes */
-.timeline-box {
-    box-shadow: 0 6px 15px rgba(0,0,0,0.05);
-    padding: 1rem;
-    border-radius: 16px;
-    border-left: 6px solid #9b59d0;
-    margin-bottom: 1.2rem;
+# .timeline-box {
+#     box-shadow: 0 6px 15px rgba(0,0,0,0.05);
+#     padding: 1rem;
+#     border-radius: 16px;
+#     border-left: 6px solid #9b59d0;
+#     margin-bottom: 1.2rem;
+# }
+# .timeline-item {
+#     background: linear-gradient(90deg, #5b4bff, #9b59d0);
+#     color: white;
+#     padding: 6px 14px;
+#     border-radius: 999px;
+#     font-weight: 600;
+#     display: inline-block;
+#     margin-bottom: 8px;
+# }
+
+.timeline-item {
+    background: linear-gradient(90deg, #5b4bff, #9b59d0);
+    color: var(--text-color); /* fallback for theme contrast */
+    ...
 }
 .timeline-item {
     background: linear-gradient(90deg, #5b4bff, #9b59d0);
-    color: white;
-    padding: 6px 14px;
-    border-radius: 999px;
-    font-weight: 600;
-    display: inline-block;
-    margin-bottom: 8px;
+    color: var(--text-color); /* fallback for theme contrast */
+    ...
 }
+
+
 
 /* Tabs style */
 .stTabs [role="tablist"] {
@@ -459,6 +472,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
