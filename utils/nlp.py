@@ -3,7 +3,7 @@ import os
 from typing import List, Dict
 import re
 import dateparser
-import openai
+from openai import OpenAI
 
 # Load API key from environment (Streamlit secrets)
 OPENAI_KEY = os.getenv("OPENAI_API_KEY")
@@ -119,8 +119,8 @@ def find_dates(text: str):
 #         return resp.choices[0].message.content.strip()
 #     except Exception as e:
 #         return f"AI summarization failed: {e}"
-from openai import OpenAI
-import os
+
+
 
 client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
@@ -146,6 +146,7 @@ def lightweight_summary(texts: List[str]) -> str:
 
     summary = " ".join(bullets[:5])
     return summary[:1000] + ("..." if len(summary) > 1000 else "")
+
 
 
 
