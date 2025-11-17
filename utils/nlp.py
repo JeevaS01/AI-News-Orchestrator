@@ -1,162 +1,93 @@
 # utils/nlp.py
 import os
+import spacy
+from dateutil import parser as du_parser
+import dateparser
+import openai
 from typing import List, Dict
 import re
-import dateparser
-import OpenAI
-#import streamlit as st
 
-#client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-
-# Load API key from environment (Streamlit secrets)
 OPENAI_KEY = os.getenv("OPENAI_API_KEY")
 if OPENAI_KEY:
-     openai.api_key = OPENAI_KEY
+    openai.api_key = OPENAI_KEY
 
+# load spaCy small english
+try:
+    nlp = spacy.load("en_core_web_sm")
+except Exception:
+    # instruct user to download model in README
+    nlp = None
 
-# -----------------------------------------
-# Lightweight ENTITY extraction (no spaCy)
-# -----------------------------------------
 def extract_entities(text: str) -> Dict:
-    """
-    Simple regex-based entity extraction suitable for Streamlit Cloud.
-    Extracts:
-    - Names (capitalized phrases)
-    - Organizations
-    - Places
-    """
-
-    if not text:
-        return {"PERSON": [], "ORG": [], "GPE": [], "MISC": []}
-
-    # Capture capitalized words or sequences (e.g. "Joe Biden", "OpenAI", "New York")
-    pattern = r"\b([A-Z][a-z]+(?:\s+[A-Z][a-z]+)*)"
-    matches = re.findall(pattern, text)
-
-    # Remove common false positives
-    blacklist = {"The", "A", "In", "On", "At", "Of", "And", "For", "With", "To"}
-
-    cleaned = [m for m in matches if m not in blacklist]
-
-    # Deduplicate
-    cleaned = list(dict.fromkeys(cleaned))[:30]
-
-    # Split heuristically into categories
-    entities = {
-        "PERSON": [],
-        "ORG": [],
-        "GPE": [],
-        "MISC": []
-    }
-
-    for e in cleaned:
-        if len(e.split()) == 2:  # likely a person (2-word names)
-            entities["PERSON"].append(e)
-        elif "University" in e or "Corp" in e or "Inc" in e or "AI" in e or "Company" in e:
-            entities["ORG"].append(e)
-        elif e in ["India", "USA", "China", "Russia", "Germany", "UK"]:
-            entities["GPE"].append(e)
+    ents = {"PERSON":[], "ORG":[], "GPE":[], "DATE":[], "EVENT":[], "MISC":[]}
+    if not nlp or not text:
+        return ents
+    doc = nlp(text[:50000])
+    for e in doc.ents:
+        if e.label_ in ents:
+            ents[e.label_].append(e.text)
         else:
-            entities["MISC"].append(e)
+            ents["MISC"].append(e.text)
+    # dedupe
+    for k in ents:
+        ents[k] = list(dict.fromkeys(ents[k]))[:20]
+    return ents
 
-    return entities
-
-
-# -----------------------------------------
-# Date extraction
-# -----------------------------------------
-
-def find_dates(text: str):
-    matches = re.findall(r'\b(?:\d{1,2}[\s/-])?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s/-]?\d{2,4}\b', text, re.IGNORECASE)
-    parsed_dates = [dateparser.parse(m).date().isoformat() for m in matches if dateparser.parse(m)]
-    return parsed_dates
-
-    found_dates = set()
-
-    # Date-like patterns
+def find_dates(text: str) -> List[str]:
+    # look for date-like substrings; use dateparser to normalize
+    res = set()
+    # quick regex for YYYY or Month words
     patterns = [
+        r"\b(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Sept|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s*\d{0,4}",
         r"\b\d{4}-\d{2}-\d{2}\b",
+        r"\b\d{1,2}\s+(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}\b",
         r"\b\d{1,2}/\d{1,2}/\d{2,4}\b",
-        r"\b\d{1,2}\s+(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{4}\b",
-        r"\b(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*\s+\d{1,2},?\s*\d{0,4}",
         r"\b\d{4}\b"
     ]
-
     for pat in patterns:
         for m in re.findall(pat, text, flags=re.IGNORECASE):
-            dt = dateparser.parse(m)
-            if dt:
-                found_dates.add(dt.date().isoformat())
+            parsed = dateparser.parse(m)
+            if parsed:
+                res.add(parsed.date().isoformat())
+    # fallback: try sentence-level parse
+    for sent in text.split("."):
+        dt = dateparser.parse(sent)
+        if dt:
+            res.add(dt.date().isoformat())
+    return sorted(res)
 
-    return sorted(found_dates)
-
-
-# -----------------------------------------
-# OpenAI summarization
-# -----------------------------------------
-def openai_summarize(texts: List[str], prompt_extra: str = "") -> str:
+def openai_summarize(texts: List[str], prompt_extra: str="") -> str:
     if not OPENAI_KEY:
-        return "OpenAI API key missing. Set OPENAI_API_KEY in environment."
-
+        return "OpenAI API key not provided; cannot run LLM summarization. Set OPENAI_API_KEY in environment."
     combined = "\n\n---\n\n".join([t[:4000] for t in texts])
-
     system_prompt = (
-        "You are an AI that summarizes multiple news articles. "
-        "Output: (1) Timeline with ISO dates → events, "
-        "(2) 2-paragraph summary, "
-        "(3) Conflicts between sources."
+        "You are an assistant that reads multiple news articles and writes a concise timeline of events, "
+        "listing chronological milestones with short descriptions (date → event). Also produce a short summary and note any conflicting claims among the sources."
     )
-
-    user_prompt = f"{prompt_extra}\n\nArticles:\n{combined}"
-
+    user_prompt = f"{prompt_extra}\n\nArticles:\n{combined}\n\nProduce: (1) timeline bullets with ISO dates, (2) 2-paragraph summary, (3) 'Conflicts:' short notes"
     try:
         resp = openai.ChatCompletion.create(
-            model="gpt-4o-mini",
+            model="gpt-4o-mini", # use available model or gpt-4 if user prefers
             messages=[
-                {"role": "system", "content": system_prompt},
-                {"role": "user", "content": user_prompt}
+                {"role":"system","content":system_prompt},
+                {"role":"user","content":user_prompt}
             ],
             temperature=0.2,
             max_tokens=800
         )
         return resp.choices[0].message.content.strip()
     except Exception as e:
-        return f"AI summarization failed: {e}"
+        return f"LLM summarization failed: {e}"
 
-
-
-# def openai_summarize(texts):
-#     combined_text = "\n\n".join(texts[:5])
-#     response = client.chat.completions.create(
-#         # model="gpt-4",
-#         model="gpt-3.5-turbo",
-
-#         messages=[
-#             {"role": "system", "content": "You are a helpful assistant that summarizes news articles."},
-#             {"role": "user", "content": f"Summarize the following:\n\n{combined_text}"}
-#         ]
-#     )
-#     return response.choices[0].message.content
-
-# -----------------------------------------
-# Lightweight fallback summary
-# -----------------------------------------
 def lightweight_summary(texts: List[str]) -> str:
+    # simple heuristics fallback: join first sentences
     bullets = []
     for t in texts:
-        first_line = t.strip().split("\n")[0][:250]
-        bullets.append(first_line)
-
+        s = t.strip().split("\n")
+        if s:
+            intro = s[0][:250]
+            bullets.append(intro)
     summary = " ".join(bullets[:5])
-    return summary[:1000] + ("..." if len(summary) > 1000 else "")
-
-
-
-
-
-
-
-
-
-
-
+    if len(summary) > 1000:
+        summary = summary[:1000] + "..."
+    return summary
