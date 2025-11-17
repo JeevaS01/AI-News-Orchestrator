@@ -172,7 +172,7 @@ if run_button and query.strip():
         summary_text = openai_summarize(texts) if use_openai else lightweight_summary(texts)
 
     tab1, tab2, tab3 = st.tabs(["🕒 Timeline", "🧠 Summary", "📊 Sources"])
-
+    st.markdown(f"<div class='auto-text'>{summary_text}</div>", unsafe_allow_html=True)
     with tab1:
         st.markdown("### Timeline")
         fig = plot_timeline(milestones)
@@ -445,6 +445,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
