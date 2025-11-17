@@ -191,6 +191,11 @@ if run_button and query.strip():
         st.markdown("### Timeline")
         fig = plot_timeline(milestones)
         st.write("🧪 Timeline figure created:", fig is not None)
+        st.write("🧪 Dates used in timeline:")
+        for m in milestones:
+            if m.get("date"):
+               st.write(m["date"])
+       
         if fig:
             st.plotly_chart(fig, use_container_width=True)
         else:
@@ -242,6 +247,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
