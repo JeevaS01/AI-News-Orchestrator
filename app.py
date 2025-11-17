@@ -153,7 +153,8 @@ st.markdown("</div>", unsafe_allow_html=True)
 # -----------------------------
 if run_button and query.strip():
     with st.spinner("Fetching articles and building timeline..."):
-        articles = aggregate_articles(query, max_articles)
+        articles = aggregate_articles(query=query)
+
         if not articles:
             st.warning("No articles found. Check NEWSAPI_KEY or internet connection.")
         for a in articles:
@@ -210,3 +211,4 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
