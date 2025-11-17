@@ -13,14 +13,15 @@ def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
     items = []
 
     for a in articles:
-        date = a.get("publishedAt")
+        # Try publishedAt first
+        raw_date = a.get("publishedAt")
+        dt = dateparser.parse(raw_date) if raw_date else None
 
-        # Normalize using dateparser
-        if date:
-            dt = dateparser.parse(date)
-            iso = dt.date().isoformat() if dt else None
-        else:
-            iso = None
+        # Fallback: use first extracted date from content/title
+        if not dt and a.get("dates_found"):
+            dt = dateparser.parse(a["dates_found"][0])
+
+        iso = dt.date().isoformat() if dt else None
 
         title = a.get("title") or ""
         text = a.get("content") or ""
@@ -61,4 +62,5 @@ def plot_timeline(milestones: List[Dict]):
         showlegend=False
     )
     return fig
+
 
