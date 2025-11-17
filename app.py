@@ -21,6 +21,21 @@ st.set_page_config(
     page_icon="✨",
     layout="wide",             # wide layout
     initial_sidebar_state="expanded")
+st.markdown(
+    """
+    <style>
+    /* Main background */
+    .css-18e3th9, .css-1v3fvcr {
+        background-color: #ffffff !important;
+        color: #262730 !important;
+    }
+    /* Sidebar background */
+    .css-1d391kg {
+        background-color: #f5f5f5 !important;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
 
 # -----------------------------
 # Inject custom CSS for dashboard
@@ -473,6 +488,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
