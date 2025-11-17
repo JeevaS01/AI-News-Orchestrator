@@ -18,7 +18,7 @@ import pandas as pd
 # Page config
 st.set_page_config(page_title="AI News Orchestrator", layout="wide")
 st.write("NEWSAPI_KEY loaded:", bool(news_api_key))
-st.write("OPENAI_API_KEY loaded:", bool(os.getenv("OPENAI_API_KEY")))
+st.write("OPENAI_API_KEY loaded:",bool(openai_api_key)
 
 
 # -----------------------------
@@ -232,6 +232,7 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
 
 
