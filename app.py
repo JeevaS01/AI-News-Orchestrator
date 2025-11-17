@@ -160,7 +160,13 @@ st.markdown("""
 # -----------------------------
 st.markdown('<div class="header-title">AI News Orchestrator</div>', unsafe_allow_html=True)
 st.markdown('<div class="header-sub">🧠 Event Timeline Generator & Multi-Source News Analyzer</div>', unsafe_allow_html=True)
-st.markdown("<h3 style='color: var(--primary-color);'>Theme Test: Primary Color</h3>", unsafe_allow_html=True)
+st.markdown(f"""
+    <span style='background-color: var(--primary-color); color: white;
+                 padding: 6px 14px; border-radius: 999px;
+                 font-weight: 600; display: inline-block;'>
+        HR Analytics
+    </span>
+""", unsafe_allow_html=True)
 st.subheader("🔍 Enter An Event Or Topic")
 
 st.markdown("<div class='auto-text'>Event / Topic (e.g., 'Chandrayaan-3 mission', 'OpenAI GPT-5 launch')</div>", unsafe_allow_html=True)
@@ -467,6 +473,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
