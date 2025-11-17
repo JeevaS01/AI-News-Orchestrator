@@ -68,20 +68,20 @@ st.markdown("""
     color: #666666;
     margin-bottom: 1.5rem;
 }
-/* Adaptive input label and value */
-.input-label {
-    color: var(--text-color);
-    font-size: 18px;
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-.input-wrapper input {
-    color: var(--text-color) !important;
-    background-color: var(--background-color) !important;
-    border: 1px solid #ccc !important;
-    border-radius: 10px !important;
-    padding: 0.6rem 1rem !important;
-}
+# /* Adaptive input label and value */
+# .input-label {
+#     color: var(--text-color);
+#     font-size: 18px;
+#     font-weight: 600;
+#     margin-bottom: 0.5rem;
+# }
+# .input-wrapper input {
+#     color: var(--text-color) !important;
+#     background-color: var(--background-color) !important;
+#     border: 1px solid #ccc !important;
+#     border-radius: 10px !important;
+#     padding: 0.6rem 1rem !important;
+# }
 
 /* Gradient buttons */
 .stButton>button {
@@ -461,6 +461,7 @@ st.markdown("""
 #   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 # </div>
 # """, unsafe_allow_html=True)
+
 
 
 
