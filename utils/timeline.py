@@ -37,22 +37,20 @@ import dateparser
 #     # Sort by date (None values go to the end)
 #     items_sorted = sorted(items, key=lambda x: x["date"] if x["date"] else "9999-12-31")
 #     return items_sorted
+from datetime import datetime
+
 def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
     items = []
 
     for a in articles:
         raw_date = a.get("publishedAt")
-
-        # Try publishedAt first
         dt = dateparser.parse(raw_date) if raw_date else None
 
-        # Fallback: use first extracted date from content/title
         if not dt and a.get("dates_found"):
             dt = dateparser.parse(a["dates_found"][0])
 
-        # Final fallback: use today's date (optional)
         if not dt:
-            continue  # or dt = datetime.now()
+            continue  # Skip if no valid date
 
         iso = dt.date().isoformat()
 
@@ -69,19 +67,20 @@ def build_milestones_from_entities(articles: List[Dict]) -> List[Dict]:
 
 def plot_timeline(milestones: List[Dict]):
     df = []
-
     for m in milestones:
-        if not m.get("date"):
+        date = m.get("date")
+        if not date:
+            print("Skipping milestone with no date:", m["headline"])
             continue
         try:
-            parsed_date = pd.to_datetime(m["date"])
+            parsed_date = pd.to_datetime(date)
             df.append({
                 "date": parsed_date,
                 "label": m["headline"],
                 "source": m["source"]
             })
         except Exception as e:
-            print("Date parsing failed:", m["date"], e)
+            print("Date parsing failed:", date, e)
 
     if not df:
         return None
