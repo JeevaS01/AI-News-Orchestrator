@@ -62,9 +62,11 @@ def extract_entities(text: str) -> Dict:
 # -----------------------------------------
 # Date extraction
 # -----------------------------------------
-def find_dates(text: str) -> List[str]:
-    if not text:
-        return []
+
+def find_dates(text: str):
+    matches = re.findall(r'\b(?:\d{1,2}[\s/-])?(?:Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)[a-z]*[\s/-]?\d{2,4}\b', text, re.IGNORECASE)
+    parsed_dates = [dateparser.parse(m).date().isoformat() for m in matches if dateparser.parse(m)]
+    return parsed_dates
 
     found_dates = set()
 
@@ -130,3 +132,4 @@ def lightweight_summary(texts: List[str]) -> str:
 
     summary = " ".join(bullets[:5])
     return summary[:1000] + ("..." if len(summary) > 1000 else "")
+
