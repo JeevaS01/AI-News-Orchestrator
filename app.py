@@ -212,13 +212,13 @@ if run_button and query.strip():
             })
         df = pd.DataFrame(rows)
         # Safe rendering of the source table (prevents KeyError if df is missing columns)
-expected_cols = ['source', 'title', 'score']
-available_cols = [c for c in expected_cols if c in df.columns]
-
-if len(available_cols) == 0:
-    st.warning("No article scoring data available.")
+expected_cols = ['source','title','score']
+available = [c for c in expected_cols if c in df.columns]
+if available:
+    st.dataframe(df[available])
 else:
-    st.dataframe(df[available_cols])
+    st.warning("No article scoring data available.")
+
 
 
 # Footer
@@ -228,4 +228,5 @@ st.markdown("""
   Built with ❤️ by Jeeva | Powered by Streamlit & OpenAI
 </div>
 """, unsafe_allow_html=True)
+
 
