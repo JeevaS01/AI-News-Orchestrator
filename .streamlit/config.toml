@@ -1,0 +1,7 @@
+[theme]
+base = "light"
+primaryColor = "#00cec9"               # Cool teal
+backgroundColor = "#f0faff"            # Frosty blue-white
+secondaryBackgroundColor = "#ffffff"
+textColor = "#2d3436"
+font = "sans serif"
